@@ -1,31 +1,18 @@
-import React from "react";
-import { Item } from "./interfaces/Item";
+import { EntryFieldProps } from "./interfaces/EntryFieldProps";
 
-interface EntryFieldProps {
-    click: () => void;
-    change: (event:any) => void;
-    input: Item;
-}
-
-class EntryField extends React.Component<EntryFieldProps> {
-    constructor(props: any) {
-        super(props);
-    }
-
-    render() {
+function EntryField(props: EntryFieldProps) {
         return (
             <div>
                 <h4>You can add more than one item using comma separated values.</h4>
                 <input
                     type="text"
-                    value={this.props.input.item}
-                    onChange={this.props.change}
+                    value={props.input.item}
+                    onChange={props.change}
                 />
-                <button onClick={this.props.click}>Add Item(s)</button>
+                <button onClick={props.click}>Add Item(s)</button>
             </div>
             
         );
-    }
 }
 
 export default EntryField;

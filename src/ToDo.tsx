@@ -1,13 +1,8 @@
 import React from "react";
 import EntryField from "./EntryField";
 import { Item } from "./interfaces/Item";
+import { ToDoState } from "./interfaces/ToDoState";
 import List from "./List";
-
-interface ToDoState {
-    list: Item[];
-    input: Item;
-    repeats: string[];
-}
 
 class ToDo extends React.Component<{}, ToDoState> {
     initialList: Item[] = [
