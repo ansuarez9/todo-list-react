@@ -15,7 +15,7 @@ class EntryField extends React.Component<EntryFieldProps> {
     render() {
         return (
             <div>
-                <h4>You can add more than 1 using comma separated values.</h4>
+                <h4>You can add more than one item using comma separated values.</h4>
                 <input
                     type="text"
                     value={this.props.input.item}
