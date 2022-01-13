@@ -6,9 +6,9 @@ import List from "./List";
 
 class ToDo extends React.Component<{}, ToDoState> {
     initialList: Item[] = [
-        {item: 'Learn React', editing: false}, 
-        {item: 'Practice Guitar', editing: false}, 
-        {item: 'Sleep', editing: false}
+        {idx: (Math.floor(Math.random() * 1000)), item: 'Learn React', editing: false}, 
+        {idx: (Math.floor(Math.random() * 1000)),item: 'Practice Guitar', editing: false}, 
+        {idx: (Math.floor(Math.random() * 1000)),item: 'Sleep', editing: false}
     ];
 
     constructor(props: any){
@@ -17,6 +17,7 @@ class ToDo extends React.Component<{}, ToDoState> {
         this.state = {
             list: this.initialList,
             input: {
+                idx: null,
                 item: '',
                 editing: false
             },
@@ -27,6 +28,7 @@ class ToDo extends React.Component<{}, ToDoState> {
     handleInput = (event: any) => {
         this.setState({
             input: {
+                idx: null,
                 item: event.target.value,
                 editing: this.state.input.editing
             }
@@ -54,6 +56,7 @@ class ToDo extends React.Component<{}, ToDoState> {
         }
         const newItemObjects = newItems?.map(i => {
             return {
+                idx: (Math.floor(Math.random() * 1000)),
                 item: i,
                 editing: false
             }
@@ -64,6 +67,7 @@ class ToDo extends React.Component<{}, ToDoState> {
         this.setState({
             list: list,
             input: {
+                idx: null,
                 item: '',
                 editing: false
             }
@@ -90,10 +94,9 @@ class ToDo extends React.Component<{}, ToDoState> {
         return { repeats: (repeats.length > 0), updatedNewItems: newList };
     }
 
-    handleRemove = (event: any) => {
-        const index = +event.target.dataset.idx;
-        const list = this.state.list.filter((itemObj: Item, idx: number) => {
-            return idx !== index;
+    handleRemove = (key: number) => {
+        const list = this.state.list.filter((itemObj: Item) => {
+            return itemObj.idx !== key;
         });
 
         this.setState({
@@ -101,18 +104,19 @@ class ToDo extends React.Component<{}, ToDoState> {
         });
     }
 
-    handleEdit = (event: any) => {
-        const index = +event.target.dataset.idx;
+    handleEdit = (key: number) => {
         let list = this.state.list.slice();
-        list = list.map((itemObj: Item, idx: number) => ({
+        list = list.map((itemObj: Item) => ({
+                idx: itemObj.idx,
                 item: itemObj.item,
-                editing: (index === idx) ? true : false
+                editing: (key === itemObj.idx) ? true : false
             })
         );
+        const itemToEdit = Object.assign({}, list.find(item => item.idx === key));
 
         this.setState({
             list: list,
-            input: list[index]
+            input: itemToEdit
         });
     }
     
