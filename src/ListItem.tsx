@@ -1,19 +1,28 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import usePrevious from "./hooks/UsePrevious";
 import { Item } from "./interfaces/Item";
 
 interface ListItemProps {
     itemObj: Item,
     actions: {
         remove: (e: any) => void,
-        edit: (e: any) => void
+        edit: (e: any, undo?: boolean) => void
     }
     idx: number | null
 }
 
 function ListItem(props: ListItemProps ) {
     const k = props.idx;
-    console.log(`${k}: ${props.itemObj.item}`);
     const [strikethrough, setStrikethrough] = useState(false);
+    const [enableEdit, setEnableEdit] = useState(false);
+
+    const prevValue = usePrevious(props.itemObj.item);
+    
+    useEffect(() => {
+        if(!!prevValue && prevValue !== props.itemObj.item){
+            setEnableEdit(false);
+        }
+    }, [props.itemObj.item]);
 
     function handleRemove(k: number | null) {
         if(strikethrough){
@@ -27,20 +36,35 @@ function ListItem(props: ListItemProps ) {
         if(strikethrough) {
             return false;
         }
+
+        setEnableEdit(true);
         return props.actions.edit(k);
     }
 
-    let editing;
-    if(props.itemObj.editing){
-        editing = <span className="editing"> (editing)</span>
+    function handleUndoClick() {
+        if(strikethrough){
+            setStrikethrough(false);
+        } else {
+            setEnableEdit(false);
+            return props.actions.edit(k, true);
+        }
     }
+
+    function showUndoButton() {
+        return (strikethrough || enableEdit) ? <span>(<span onClick={handleUndoClick} className='editableItem'>undo</span>)</span> : '';
+    }
+
+    function showRemoveButton() {
+        return !enableEdit ? <span onClick={() => handleRemove(k)} className="remove">X</span> : <span style={{paddingLeft: '1.1em'}}></span>;
+    }
+
     return (
         <li>
-            <span onClick={() => handleRemove(k)} className="remove">X</span>
+            {showRemoveButton()}
             <span onClick={() => handleEdit(k)} className={strikethrough ? 'strikethrough' : 'editableItem'}>
                 {props.itemObj.item}
-            </span>
-            {editing}
+            </span>&nbsp;
+            {showUndoButton()}
         </li>
     )
 }

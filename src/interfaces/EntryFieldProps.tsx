@@ -1,7 +1,7 @@
-import { Item } from "./Item";
+import { Input } from "./Input";
 
 export interface EntryFieldProps {
-    click: () => void;
+    addItem: (item: Input) => void;
     change: (event:any) => void;
-    input: Item;
+    input: Input;
 }

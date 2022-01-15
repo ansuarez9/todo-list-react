@@ -1,14 +1,15 @@
 import React from "react";
 import EntryField from "./EntryField";
+import { Input } from "./interfaces/Input";
 import { Item } from "./interfaces/Item";
 import { ToDoState } from "./interfaces/ToDoState";
 import List from "./List";
 
 class ToDo extends React.Component<{}, ToDoState> {
     initialList: Item[] = [
-        {idx: (Math.floor(Math.random() * 1000)), item: 'Learn React', editing: false}, 
-        {idx: (Math.floor(Math.random() * 1000)),item: 'Practice Guitar', editing: false}, 
-        {idx: (Math.floor(Math.random() * 1000)),item: 'Sleep', editing: false}
+        {idx: (Math.floor(Math.random() * 1000)), item: 'Learn React'}, 
+        {idx: (Math.floor(Math.random() * 1000)),item: 'Practice Guitar'}, 
+        {idx: (Math.floor(Math.random() * 1000)),item: 'Sleep'}
     ];
 
     constructor(props: any){
@@ -28,14 +29,14 @@ class ToDo extends React.Component<{}, ToDoState> {
     handleInput = (event: any) => {
         this.setState({
             input: {
-                idx: null,
+                idx: this.state.input.idx,
                 item: event.target.value,
                 editing: this.state.input.editing
             }
         })
     }
 
-    handleClick = () => {
+    handleAddItem = (updatedItem: Input) => {
         this.setState({
             repeats: []
         });
@@ -43,8 +44,8 @@ class ToDo extends React.Component<{}, ToDoState> {
         let newItems = this.state.input.item.split(',').map(item => item.trim());
         let list = this.state.list.slice();
 
-        if(this.state.input.editing){
-            const index = this.state.list.findIndex(i => i.editing === true);
+        if(updatedItem.idx) {
+            const index = this.state.list.findIndex((i) => i.idx === updatedItem.idx);
             const editedItem = Object.assign({}, list[index], {item: newItems.shift(), editing: false});
             list[index] = editedItem;
         }
@@ -104,15 +105,25 @@ class ToDo extends React.Component<{}, ToDoState> {
         });
     }
 
-    handleEdit = (key: number) => {
+    handleEdit = (key: number, undo?: boolean) => {
+        if(undo){
+            this.setState({
+                input: {
+                    idx: null,
+                    item: '',
+                    editing: false 
+                }
+            });
+            return;
+        }
+        
         let list = this.state.list.slice();
         list = list.map((itemObj: Item) => ({
                 idx: itemObj.idx,
                 item: itemObj.item,
-                editing: (key === itemObj.idx) ? true : false
-            })
-        );
-        const itemToEdit = Object.assign({}, list.find(item => item.idx === key));
+            }));
+
+        const itemToEdit = Object.assign({}, list.find(item => item.idx === key)) as Input;
 
         this.setState({
             list: list,
@@ -131,7 +142,7 @@ class ToDo extends React.Component<{}, ToDoState> {
                 <header>Things To Do</header>
                 {(repeatedItems.length > 0) ? <div>Item(s) {repeatedItems} are already on the list</div> : null}
                 <List remove={this.handleRemove} edit={this.handleEdit} list={this.state.list} />
-                <EntryField input={this.state.input} change={this.handleInput} click={this.handleClick} />
+                <EntryField input={this.state.input} change={this.handleInput} addItem={this.handleAddItem} />
             </div>
         )
     }

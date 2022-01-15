@@ -9,7 +9,7 @@ function EntryField(props: EntryFieldProps) {
                     value={props.input.item}
                     onChange={props.change}
                 />
-                <button onClick={props.click}>Add Item(s)</button>
+                <button onClick={() => props.addItem(props.input)}>Add Item(s)</button>
             </div>
             
         );

@@ -29,7 +29,7 @@ li {
 
 .editableItem:hover {
     opacity: .7;
-    font-size: 1.05em;
+    text-decoration: underline;
 }
 
 .editing {

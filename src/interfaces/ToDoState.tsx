@@ -1,7 +1,8 @@
+import { Input } from "./Input";
 import { Item } from "./Item";
 
 export interface ToDoState {
     list: Item[];
-    input: Item;
+    input: Input;
     repeats: string[];
 }
