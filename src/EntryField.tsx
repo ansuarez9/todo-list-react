@@ -2,8 +2,8 @@ import { EntryFieldProps } from "./interfaces/EntryFieldProps";
 
 function EntryField(props: EntryFieldProps) {
         return (
-            <div>
-                <h4>You can add more than one item using comma separated values.</h4>
+            <div className="mt-4">
+                <h6>You can add more than one item using comma separated values.</h6>
                 <input
                     type="text"
                     value={props.input.item}

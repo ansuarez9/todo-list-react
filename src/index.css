@@ -37,3 +37,7 @@ li {
     opacity: .85;
     font-style: italic;
 }
+
+.active {
+    opacity: .85;
+}

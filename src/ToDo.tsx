@@ -1,26 +1,29 @@
 import React from "react";
 import EntryField from "./EntryField";
-import { Input } from "./interfaces/Input";
+import HistoryList from "./HistoryList";
 import { Item } from "./interfaces/Item";
 import { ToDoState } from "./interfaces/ToDoState";
 import List from "./List";
 
 class ToDo extends React.Component<{}, ToDoState> {
-    initialList: Item[] = [
-        {idx: (Math.floor(Math.random() * 1000)), item: 'Learn React'}, 
-        {idx: (Math.floor(Math.random() * 1000)),item: 'Practice Guitar'}, 
-        {idx: (Math.floor(Math.random() * 1000)),item: 'Sleep'}
+    initialList: { list: Item[] }[] = [
+        {
+            list: [
+                {idx: (Math.floor(Math.random() * 1000)), item: 'Learn React'}, 
+                {idx: (Math.floor(Math.random() * 1000)),item: 'Practice Guitar'}, 
+                {idx: (Math.floor(Math.random() * 1000)),item: 'Sleep'}
+            ]
+        }
     ];
 
     constructor(props: any){
         super(props);
 
         this.state = {
-            list: this.initialList,
+            historyList: this.initialList,
             input: {
                 idx: null,
-                item: '',
-                editing: false
+                item: ''
             },
             repeats: []
         }
@@ -30,24 +33,24 @@ class ToDo extends React.Component<{}, ToDoState> {
         this.setState({
             input: {
                 idx: this.state.input.idx,
-                item: event.target.value,
-                editing: this.state.input.editing
+                item: event.target.value
             }
         })
     }
 
-    handleAddItem = (updatedItem: Input) => {
+    handleAddItem = (updatedItem: Item) => {
         this.setState({
             repeats: []
         });
         // create an string array
         let newItems = this.state.input.item.split(',').map(item => item.trim());
-        let list = this.state.list.slice();
+        const historyList = this.state.historyList.slice();
+        const currentList = historyList[0].list.slice();
 
         if(updatedItem.idx) {
-            const index = this.state.list.findIndex((i) => i.idx === updatedItem.idx);
-            const editedItem = Object.assign({}, list[index], {item: newItems.shift(), editing: false});
-            list[index] = editedItem;
+            const index = currentList.findIndex((i) => i.idx === updatedItem.idx);
+            const editedItem = Object.assign({}, currentList[index], {item: newItems.shift()});
+            currentList[index] = editedItem;
         }
 
         // returns an object containing array of items already in to-do list, and new items array with the repeats removed
@@ -58,19 +61,18 @@ class ToDo extends React.Component<{}, ToDoState> {
         const newItemObjects = newItems?.map(i => {
             return {
                 idx: (Math.floor(Math.random() * 1000)),
-                item: i,
-                editing: false
+                item: i.trim().replace(/^\w/, (c) => c.toUpperCase())
             }
         });
 
-        list = [...list, ...newItemObjects];
+        const updatedList = [...currentList, ...newItemObjects];
+        const updatedHistoryList = [{list: updatedList}, ...historyList];
 
         this.setState({
-            list: list,
+            historyList: updatedHistoryList,
             input: {
                 idx: null,
-                item: '',
-                editing: false
+                item: ''
             }
         });
     }
@@ -78,7 +80,7 @@ class ToDo extends React.Component<{}, ToDoState> {
     checkRepeats = (newItems: string[]) => {
         const lcaseNewItems = newItems.map(i => i.toLowerCase());
         let repeats: string[] = [];
-        const stateList = this.state.list.slice();
+        const stateList = this.state.historyList[0].list.slice();
 
         stateList.forEach((i) => {
             if(lcaseNewItems.includes(i.item.toLowerCase())){
@@ -96,12 +98,15 @@ class ToDo extends React.Component<{}, ToDoState> {
     }
 
     handleRemove = (key: number) => {
-        const list = this.state.list.filter((itemObj: Item) => {
+        const historyList = this.state.historyList.slice();
+        const currentList = historyList[0].list.slice();
+        const updatedList = currentList.filter((itemObj: Item) => {
             return itemObj.idx !== key;
         });
+        const updatedHistoryList = [{list: updatedList}, ...historyList];
 
         this.setState({
-            list: list
+            historyList: updatedHistoryList
         });
     }
 
@@ -110,24 +115,26 @@ class ToDo extends React.Component<{}, ToDoState> {
             this.setState({
                 input: {
                     idx: null,
-                    item: '',
-                    editing: false 
+                    item: ''
                 }
             });
             return;
         }
         
-        let list = this.state.list.slice();
-        list = list.map((itemObj: Item) => ({
-                idx: itemObj.idx,
-                item: itemObj.item,
-            }));
+        const historyList = this.state.historyList.slice();
+        const currentList = historyList[0].list.slice();
 
-        const itemToEdit = Object.assign({}, list.find(item => item.idx === key)) as Input;
+        const itemToEdit = Object.assign({}, currentList.find(item => item.idx === key));
 
         this.setState({
-            list: list,
             input: itemToEdit
+        });
+    }
+
+    handleApplyHistory(selectedHistoryIdx: number) {
+        const updatedHistoryList = this.state.historyList.slice(selectedHistoryIdx);
+        this.setState({
+            historyList: updatedHistoryList
         });
     }
     
@@ -139,11 +146,21 @@ class ToDo extends React.Component<{}, ToDoState> {
 
         return (
             <div>
-                <header>Things To Do</header>
-                {(repeatedItems.length > 0) ? <div>Item(s) {repeatedItems} are already on the list</div> : null}
-                <List remove={this.handleRemove} edit={this.handleEdit} list={this.state.list} />
-                <EntryField input={this.state.input} change={this.handleInput} addItem={this.handleAddItem} />
+                <h3>To-Do React Edition</h3>
+                <div className="card">
+                    {(repeatedItems.length > 0) ? <div>Item(s) {repeatedItems} are already on the list</div> : null}
+                    <div className="card-body">
+                        <h5 className="card-title">{this.state.historyList[0].list.length} Items</h5>
+                        <p className="card-text">You can <strong>add</strong>, <strong>edit</strong>, <strong>mark as done</strong>, or <strong>delete</strong> an item. If you'd like to go to a previous list state, use the time travel at the bottom.</p>
+                        <List remove={this.handleRemove} edit={this.handleEdit} currentList={this.state.historyList[0].list} />
+                    </div>
+                </div>
+                <div>
+                    <EntryField input={this.state.input} change={this.handleInput} addItem={this.handleAddItem} />
+                    <HistoryList applyHistory={(idx) => this.handleApplyHistory(idx)} historyList={this.state.historyList} />
+                </div>
             </div>
+           
         )
     }
 }

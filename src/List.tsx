@@ -1,4 +1,3 @@
-import React from "react";
 import { Item } from "./interfaces/Item";
 import { ListProps } from "./interfaces/ListProps";
 import ListItem from "./ListItem";
@@ -12,7 +11,7 @@ function List(props: ListProps) {
 
     return (
         <ul>
-            {props.list.map((itemObj: Item, idx: number | null) => {
+            {props.currentList.map((itemObj: Item, idx: number | null) => {
                 return (
                     <ListItem key={itemObj.idx} idx={itemObj.idx} itemObj={itemObj} actions={actions} />
                 );

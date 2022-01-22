@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Octicon from "react-component-octicons";
 import usePrevious from "./hooks/UsePrevious";
 import { Item } from "./interfaces/Item";
 
@@ -51,11 +52,15 @@ function ListItem(props: ListItemProps ) {
     }
 
     function showUndoButton() {
-        return (strikethrough || enableEdit) ? <span>(<span onClick={handleUndoClick} className='editableItem'>undo</span>)</span> : '';
+        return (strikethrough || enableEdit) ? <span onClick={handleUndoClick} className='editableItem'><Octicon name="sync"/></span> : '';
     }
 
     function showRemoveButton() {
-        return !enableEdit ? <span onClick={() => handleRemove(k)} className="remove">X</span> : <span style={{paddingLeft: '1.1em'}}></span>;
+        return !enableEdit ? (
+        <span className="editableItem" onClick={() => handleRemove(k)}>
+            <Octicon name="x" style={{color: 'rgba(197, 5, 5, 0.918)', marginRight: 8, verticalAlign: 'text-bottom'}} />
+        </span>) 
+        : <span style={{paddingLeft: '1.1em'}}></span>;
     }
 
     return (

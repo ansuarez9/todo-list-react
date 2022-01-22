@@ -3,7 +3,7 @@ import ToDo from './ToDo';
 
 function App() {
   return (
-    <div>
+    <div className='container-fluid'>
       <ToDo />
     </div>
   );
