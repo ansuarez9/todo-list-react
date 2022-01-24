@@ -58,7 +58,7 @@ function ListItem(props: ListItemProps ) {
     function showRemoveButton() {
         return !enableEdit ? (
         <span className="editableItem" onClick={() => handleRemove(k)}>
-            <Octicon name="x" style={{color: 'rgba(197, 5, 5, 0.918)', marginRight: 8, verticalAlign: 'text-bottom'}} />
+            <Octicon name="x" style={{color: (strikethrough ? 'rgba(197, 5, 5, 0.918)' : '#000'), marginRight: 8, verticalAlign: 'text-bottom'}} />
         </span>) 
         : <span style={{paddingLeft: '1.1em'}}></span>;
     }

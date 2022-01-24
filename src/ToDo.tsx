@@ -148,10 +148,10 @@ class ToDo extends React.Component<{}, ToDoState> {
             <div>
                 <h3>To-Do React Edition</h3>
                 <div className="card">
-                    {(repeatedItems.length > 0) ? <div>Item(s) {repeatedItems} are already on the list</div> : null}
+                    {(repeatedItems.length > 0) ? <div className="text-danger">Item(s) {repeatedItems} are already on the list</div> : null}
                     <div className="card-body">
                         <h5 className="card-title">{this.state.historyList[0].list.length} Items</h5>
-                        <p className="card-text">You can <strong>add</strong>, <strong>edit</strong>, <strong>mark as done</strong>, or <strong>delete</strong> an item. If you'd like to go to a previous list state, use the time travel at the bottom.</p>
+                        <p className="card-text text-dark">You can <strong>add</strong>, <strong>edit</strong>, <strong>mark as done</strong>, or <strong>delete</strong> an item. If you'd like to go to a previous list state, use the time travel at the bottom.</p>
                         <List remove={this.handleRemove} edit={this.handleEdit} currentList={this.state.historyList[0].list} />
                     </div>
                 </div>

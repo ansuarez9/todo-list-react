@@ -7,6 +7,27 @@ li {
     padding: 5px 0;
 }
 
+.addItem {
+    margin-left: 1em;
+    border: 1px solid black;
+    border-radius: 16px;
+    padding: 4px;
+    cursor: pointer;
+    background-color: rgb(13, 155, 13);
+    color: #fff;
+}
+
+.addItem.disabled {
+    cursor: auto;
+    color: white;
+    background-color: gray;
+    opacity: .8;
+}
+
+.addItem:hover {
+    opacity: .8;
+}
+
 .remove {
     cursor: pointer;
     font-size: .85em;
